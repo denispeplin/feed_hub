@@ -14,7 +14,7 @@ defmodule FeedHub.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger],
+    [applications: [:logger, :ecto, :postgrex],
      mod: {FeedHub, []}]
   end
 
@@ -28,6 +28,10 @@ defmodule FeedHub.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+      {:poison, "~> 2.0"},
+      {:ecto, "~> 2.0"},
+      {:postgrex, "~> 0.11"}
+    ]
   end
 end
