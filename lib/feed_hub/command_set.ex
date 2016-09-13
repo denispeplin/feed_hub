@@ -76,7 +76,8 @@ defmodule FeedHub.CommandSet do
   end
 
   defp do_parse([command | tail], command_set_data) do
-    parsed_command = parse_command(command, command_set_data[command])
+    {command_data, command_set_data} = Map.pop(command_set_data, command)
+    parsed_command = parse_command(command, command_data)
     case parsed_command do
       {:error, message} ->
         {:error, message}
