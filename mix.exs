@@ -7,8 +7,14 @@ defmodule FeedHub.Mixfile do
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps()]
+     deps: deps(),
+     elixirc_paths: elixirc_paths(Mix.env)]
   end
+
+  # This makes sure your factory and any other modules in test/support are compiled
+  # when in the test environment.
+  defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
+  defp elixirc_paths(_), do: ["lib", "web"]
 
   # Configuration for the OTP application
   #
@@ -31,7 +37,9 @@ defmodule FeedHub.Mixfile do
     [
       {:poison, "~> 2.0"},
       {:ecto, "~> 2.0"},
-      {:postgrex, "~> 0.11"}
+      {:postgrex, "~> 0.11"},
+      {:mock, "~> 0.1.1", only: :test},
+      {:ex_machina, "~> 1.0", only: :test}
     ]
   end
 end
