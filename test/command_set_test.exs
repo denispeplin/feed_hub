@@ -65,6 +65,14 @@ defmodule FeedHub.CommandSetTest do
       assert CommandSet.parse(%{}) == {:error, "No commands list"}
     end
 
+    test "empty feed source" do
+      command_set = %{
+        "commands" => ["fetch"]
+      }
+
+      assert CommandSet.parse(command_set) == {:error, "No feed source"}
+    end
+
     test "duplicated commands" do
       assert CommandSet.parse(%{"commands" => ["fetch", "fetch"]}) ==
         {:error, "There are duplicated commands in the list"}

@@ -51,11 +51,7 @@ defmodule FeedHub.CommandSet do
   def parse({:error, _} = error) do
     error
   end
-  def parse(command_set) do
-    do_parse(command_set)
-  end
-
-  defp do_parse(%{"commands" => commands} = command_set_data)
+  def parse(%{"commands" => commands} = command_set_data)
     when is_list(commands) and length(commands) > 0 do
     cond do
       length(commands) != length(Enum.uniq(commands)) ->
@@ -65,29 +61,40 @@ defmodule FeedHub.CommandSet do
           :error,
           "Unsupported commands found. Supported commands are: #{@commands |> Map.keys |> inspect}"
         }
-      true ->
-        # TODO: return erorrs from command modules inits
-        {
-          :ok,
-          Enum.map(commands, fn(command) -> @commands[command].init(command_set_data[command]) end)
-        }
+      :else ->
+        do_parse(commands, command_set_data)
       end
   end
-  defp do_parse(%{"commands" => commands}) when is_list(commands) do
+  def parse(%{"commands" => commands}) when is_list(commands) do
     {:error, "Commands list is empty"}
   end
-  defp do_parse(%{"commands" => _}) do
+  def parse(%{"commands" => _}) do
     {:error, "Commands are not a list"}
   end
-  defp do_parse(_) do
+  def parse(_) do
     {:error, "No commands list"}
+  end
+
+  defp do_parse([command | tail], command_set_data) do
+    parsed_command = parse_command(command, command_set_data[command])
+    case parsed_command do
+      {:error, message} ->
+        {:error, message}
+      _ ->
+        {:ok, [parsed_command | do_parse(tail, command_set_data)]}
+    end
+  end
+  defp do_parse([], _), do: []
+
+  defp parse_command(command, command_data) do
+    @commands[command].init(command_data)
   end
 
   def run({:ok, commands}) do
     do_run(commands)
     :ok
   end
-  def run({:error, message} = error), do: error
+  def run({:error, _} = error), do: error
 
   # TODO: implement run for all commands, not only first
   def do_run([command | _commands]) do
