@@ -20,7 +20,7 @@ defmodule FeedHub.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :ecto, :postgrex],
+    [applications: [:logger, :ecto, :postgrex, :httpoison, :rss_flow],
      mod: {FeedHub, []}]
   end
 
@@ -38,6 +38,8 @@ defmodule FeedHub.Mixfile do
       {:poison, "~> 2.0"},
       {:ecto, "~> 2.0"},
       {:postgrex, "~> 0.11"},
+      {:httpoison, "~> 0.9.0"},
+      {:rss_flow, "~> 0.1.0"},
       {:mock, "~> 0.1.1", only: :test},
       {:ex_machina, "~> 1.0", only: :test}
     ]
