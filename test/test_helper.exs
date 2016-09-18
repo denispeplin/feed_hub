@@ -19,4 +19,8 @@ defmodule ExUnit.TestHelpers do
           path: IO.chardata_to_string(filename)
     end
   end
+
+  def stringify_keys(map) do
+    map |> Poison.encode! |> Poison.decode!
+  end
 end

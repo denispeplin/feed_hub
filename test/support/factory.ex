@@ -13,4 +13,9 @@ defmodule FeedHub.Factory do
     }
     %{command_set | data: data}
   end
+
+  def feed_factory do
+    url = sequence(:feed_url, &"http://example.com/feed-#{&1}")
+    %FeedHub.Feed{url: url, data: %{}, fetched_at: Ecto.DateTime.utc}
+  end
 end

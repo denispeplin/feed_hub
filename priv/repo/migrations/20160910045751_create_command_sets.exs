@@ -4,6 +4,8 @@ defmodule FeedHub.Repo.Migrations.CreateCommandSets do
   def change do
     create table(:command_sets) do
       add :data, :map, null: false
+
+      timestamps
     end
   end
 end

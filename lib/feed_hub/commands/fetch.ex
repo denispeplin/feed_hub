@@ -1,4 +1,7 @@
 defmodule FeedHub.Commands.Fetch do
+  alias FeedHub.Feed
+  alias FeedHub.Item
+
   defstruct data: nil
 
   def init(nil), do: {:error, "No feed source"}
@@ -22,10 +25,10 @@ defmodule FeedHub.Commands.Fetch do
   def call(source) do
     do_fetch(source)
     |> to_map
-    |> save
+    |> save(source)
   end
 
-  def do_fetch(url) do
+  defp do_fetch(url) do
     case HTTPoison.get(url) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, body}
@@ -43,14 +46,20 @@ defmodule FeedHub.Commands.Fetch do
     reason |> inspect
   end
 
-  def to_map({:ok, source}) do
+  defp to_map({:ok, source}) do
     {:ok, RssFlow.parse(source)}
   end
-  def to_map(error), do: error
+  defp to_map(error), do: error
 
-  # TODO: inplement saving into Postgres cache
-  def save({:ok, map}) do
+  defp save({:ok, map}, url) do
+    {items, feed} = Map.pop(map, :items)
+
+    FeedHub.Repo.transaction(fn ->
+      {:ok, feed} = Feed.save(url, feed)
+      Enum.each(items, fn(item) -> Item.save(feed.id, item) end)
+    end)
+
     {:ok, map}
   end
-  def save(error), do: error
+  defp save(error, _), do: error
 end

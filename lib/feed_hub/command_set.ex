@@ -8,11 +8,13 @@ defmodule FeedHub.CommandSet do
   schema "command_sets" do
     field :data, :map
     field :uid, :string
+
+    timestamps
   end
 
   @commands %{"fetch" => FeedHub.Commands.Fetch}
 
-  def changeset(command_set, params \\ %{}) do
+  def validate_changeset(command_set, params \\ %{}) do
     command_set
     |> Ecto.Changeset.cast(params, [:data])
     |> Ecto.Changeset.validate_required([:data])
@@ -22,7 +24,7 @@ defmodule FeedHub.CommandSet do
   Creates command set, returns feed ID.
   """
   def create(data) do
-    changeset = changeset(%FeedHub.CommandSet{}, %{data: data})
+    changeset = validate_changeset(%__MODULE__{}, %{data: data})
     case Repo.insert(changeset) do
       {:ok, command_set} ->
         # want to use RETURNING "id", "uid" instead of reloading,

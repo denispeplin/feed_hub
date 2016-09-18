@@ -5,7 +5,7 @@ defmodule FeedHub.CommandSetTest do
   alias FeedHub.CommandSet
 
   defp errors_on(model \\ %CommandSet{}, data) do
-    CommandSet.changeset(model, data).errors
+    CommandSet.validate_changeset(model, data).errors
   end
 
   setup do
@@ -27,6 +27,11 @@ defmodule FeedHub.CommandSetTest do
 
       {:ok, uid} = FeedHub.CommandSet.create(command_set)
       assert String.length(uid) == 8
+    end
+
+    test "validation error" do
+      {:error, message} = FeedHub.CommandSet.create(nil)
+      assert message == [data: {"can't be blank", []}]
     end
   end
 

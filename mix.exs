@@ -40,6 +40,7 @@ defmodule FeedHub.Mixfile do
       {:postgrex, "~> 0.11"},
       {:httpoison, "~> 0.9.0"},
       {:rss_flow, "~> 0.1.0"},
+      {:poison, "~> 2.0", only: :test},
       {:mock, "~> 0.1.1", only: :test},
       {:ex_machina, "~> 1.0", only: :test}
     ]
