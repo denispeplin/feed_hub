@@ -1,6 +1,8 @@
 defmodule FeedHub.Item do
   use Ecto.Schema
   #require Ecto.Query
+  import Ecto.Query, only: [from: 2]
+  import FeedHub.Utils, only: [value: 1]
   alias FeedHub.Repo
 
   schema "items" do
@@ -32,10 +34,11 @@ defmodule FeedHub.Item do
     end
   end
 
-  defp value(%{value: value}), do: value
-  defp value(value), do: value
-
-  #def by_feed_id(feed_id) do
-  #  Ecto.Query.where(__MODULE__, feed_id: ^feed_id)
-  #end
+  def data_by_feed_id(feed_id) do
+    from(i in "items",
+      where: i.feed_id == ^feed_id,
+      order_by: [desc: :id],
+      select: i.data
+    ) |> Repo.all
+  end
 end

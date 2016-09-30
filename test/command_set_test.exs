@@ -3,6 +3,7 @@ defmodule FeedHub.CommandSetTest do
   import FeedHub.Factory
   import Mock
   alias FeedHub.CommandSet
+  import ExUnit.TestHelpers, only: [read_rss!: 1]
 
   defp errors_on(model \\ %CommandSet{}, data) do
     CommandSet.validate_changeset(model, data).errors
@@ -35,7 +36,7 @@ defmodule FeedHub.CommandSetTest do
     end
   end
 
-  describe "fetch/1" do
+  describe "get/1" do
     test "fetches command set by uid" do
       command_set = build(:command_set) |> with_fetch |> insert |> reload
 
@@ -116,6 +117,13 @@ defmodule FeedHub.CommandSetTest do
         assert CommandSet.run({:ok, commands}) == :ok
         assert called FeedHub.Commands.Fetch.call(data)
       end
+    end
+  end
+
+  describe "compose/1" do
+    test "composing feed from cached data" do
+      feed = insert(:feed) |> with_items
+      assert CommandSet.compose({:ok, feed.url}) == read_rss!("jobs_feed")
     end
   end
 end

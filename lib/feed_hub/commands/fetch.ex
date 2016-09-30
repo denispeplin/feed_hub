@@ -59,7 +59,7 @@ defmodule FeedHub.Commands.Fetch do
       Enum.each(items, fn(item) -> Item.save(feed.id, item) end)
     end)
 
-    {:ok, map}
+    {:ok, url}
   end
   defp save(error, _), do: error
 end

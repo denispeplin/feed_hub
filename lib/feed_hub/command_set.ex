@@ -4,6 +4,8 @@ defmodule FeedHub.CommandSet do
   """
   use Ecto.Schema
   alias FeedHub.Repo
+  alias FeedHub.Feed
+  alias FeedHub.Item
 
   schema "command_sets" do
     field :data, :map
@@ -102,5 +104,15 @@ defmodule FeedHub.CommandSet do
   # TODO: implement run for all commands, not only first
   def do_run([command | _commands]) do
     Command.run(command)
+  end
+
+  def feed(uid) do
+    uid |> get |> parse |> run |> compose
+  end
+
+  def compose({:ok, url}) do
+    feed = Repo.get_by!(Feed, url: url)
+    items_data = Item.data_by_feed_id(feed.id)
+    Map.merge(feed.data, %{"items" => items_data})
   end
 end

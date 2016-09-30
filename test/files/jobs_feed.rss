@@ -6,22 +6,22 @@
     <item>
       <title>Ruby developer</title>
       <description>Remote position. Mostly backend stuff.</description>
-      <guid isPermaLink="true">http://example.com/jobs/1</guid>
+      <guid isPermaLink="true">http://example.com/jobs/4</guid>
     </item>
     <item>
       <title>Ruby developer</title>
       <description>Onsite position</description>
-      <guid isPermaLink="true">http://example.com/jobs/2</guid>
+      <guid isPermaLink="true">http://example.com/jobs/3</guid>
     </item>
     <item>
       <title>Elixir developer</title>
       <description>Remote position</description>
-      <guid isPermaLink="true">http://example.com/jobs/3</guid>
+      <guid isPermaLink="true">http://example.com/jobs/2</guid>
     </item>
     <item>
       <title>Backend Elixir developer</title>
       <description>Onsite position</description>
-      <guid isPermaLink="true">http://example.com/jobs/4</guid>
+      <guid isPermaLink="true">http://example.com/jobs/1</guid>
     </item>
   </channel>
 </rss>

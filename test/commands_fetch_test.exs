@@ -26,7 +26,7 @@ defmodule FeedHub.Commands.FetchTest do
       parsed_rss_strings = parsed_rss |> stringify_keys
       response = {:ok, %HTTPoison.Response{status_code: 200, body: rss}}
       with_mock HTTPoison, [get: fn(_) -> response end] do
-        assert FeedHub.Commands.Fetch.call(source) == {:ok, parsed_rss}
+        assert FeedHub.Commands.Fetch.call(source) == {:ok, source}
         assert called HTTPoison.get(source)
         feed = Repo.get_by(Feed, url: source)
 
