@@ -5,6 +5,7 @@ defmodule FeedHub.Commands.FetchTest do
   alias FeedHub.Item
   alias FeedHub.Repo
   import Mock
+  import Ecto.Query, only: [where: 2, order_by: 2]
   import ExUnit.TestHelpers, only: [read_file!: 1, stringify_keys: 1]
 
   describe "init/1" do
@@ -36,9 +37,15 @@ defmodule FeedHub.Commands.FetchTest do
         assert feed.data == feed_data
 
         feed_id = feed.id
-        items = Item |> Ecto.Query.where(feed_id: ^feed_id) |> Repo.all
+        items = Item |> where(feed_id: ^feed_id) |> order_by([desc: :id]) |> Repo.all
         assert is_list(items)
         assert length(items) == 4
+        item_urls = Enum.map(items, fn(item) -> item.data["guid"]["value"] end)
+        assert item_urls ==
+          ["http://example.com/jobs/4",
+          "http://example.com/jobs/3",
+          "http://example.com/jobs/2",
+          "http://example.com/jobs/1"]
       end
     end
   end

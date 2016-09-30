@@ -56,7 +56,9 @@ defmodule FeedHub.Commands.Fetch do
 
     FeedHub.Repo.transaction(fn ->
       {:ok, feed} = Feed.save(url, feed)
-      Enum.each(items, fn(item) -> Item.save(feed.id, item) end)
+      items
+      |> Enum.reverse
+      |> Enum.each(fn(item) -> Item.save(feed.id, item) end)
     end)
 
     {:ok, url}
