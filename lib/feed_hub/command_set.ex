@@ -37,6 +37,13 @@ defmodule FeedHub.CommandSet do
     end
   end
 
+  @doc """
+  Gets command set from uid, runs it and composes resulting feed.
+  """
+  def feed(uid) do
+    uid |> get |> parse |> run |> compose
+  end
+
   def get(uid) do
     __MODULE__
     |> Repo.get_by(uid: uid)
@@ -97,7 +104,7 @@ defmodule FeedHub.CommandSet do
 
   def run({:ok, commands}) do
     do_run(commands)
-    :ok
+    {:ok, commands}
   end
   def run({:error, _} = error), do: error
 
@@ -106,10 +113,7 @@ defmodule FeedHub.CommandSet do
     Command.run(command)
   end
 
-  def feed(uid) do
-    uid |> get |> parse |> run |> compose
-  end
-
+  def compose({:ok, [%FeedHub.Commands.Fetch{data: url}]}), do: compose({:ok, url})
   def compose({:ok, url}) do
     feed = Repo.get_by!(Feed, url: url)
     items_data = Item.data_by_feed_id(feed.id)

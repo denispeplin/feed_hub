@@ -3,7 +3,7 @@ defmodule FeedHub.CommandSetTest do
   import FeedHub.Factory
   import Mock
   alias FeedHub.CommandSet
-  import ExUnit.TestHelpers, only: [read_rss!: 1]
+  import ExUnit.TestHelpers, only: [read_file!: 1, read_rss!: 1]
 
   defp errors_on(model \\ %CommandSet{}, data) do
     CommandSet.validate_changeset(model, data).errors
@@ -33,6 +33,22 @@ defmodule FeedHub.CommandSetTest do
     test "validation error" do
       {:error, message} = FeedHub.CommandSet.create(nil)
       assert message == [data: {"can't be blank", []}]
+    end
+  end
+
+  describe "feed/1" do
+    test "feed composes feed from uid" do
+      command_set = build(:command_set) |> with_fetch |> insert |> reload
+      source = command_set.data["fetch"]
+      insert(:feed, url: source) |> with_items
+
+      rss = read_file!("jobs_feed.rss")
+      response = {:ok, %HTTPoison.Response{status_code: 200, body: rss}}
+      with_mock HTTPoison, [get: fn(_) -> response end] do
+        assert FeedHub.CommandSet.feed(command_set.uid) == read_rss!("jobs_feed")
+        assert FeedHub.Commands.Fetch.call(source) == {:ok, source}
+        assert called HTTPoison.get(source)
+      end
     end
   end
 
@@ -114,7 +130,7 @@ defmodule FeedHub.CommandSetTest do
       commands = [%FeedHub.Commands.Fetch{data: data}]
 
       with_mock FeedHub.Commands.Fetch, [call: fn(_url) -> :ok end] do
-        assert CommandSet.run({:ok, commands}) == :ok
+        assert CommandSet.run({:ok, commands}) == {:ok, commands}
         assert called FeedHub.Commands.Fetch.call(data)
       end
     end
