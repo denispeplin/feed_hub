@@ -9,7 +9,7 @@ defmodule FeedHub.CommandSet do
 
   schema "command_sets" do
     field :data, :map
-    field :uid, :string
+    field :uid, :string, read_after_writes: true
 
     timestamps
   end
@@ -29,9 +29,7 @@ defmodule FeedHub.CommandSet do
     changeset = validate_changeset(%__MODULE__{}, %{data: data})
     case Repo.insert(changeset) do
       {:ok, command_set} ->
-        # want to use RETURNING "id", "uid" instead of reloading,
-        # but don't know how to do it.
-        {:ok, Repo.get!(__MODULE__, command_set.id).uid}
+        {:ok, command_set.uid}
       {:error, changeset} ->
         {:error, changeset.errors}
     end

@@ -38,8 +38,8 @@ defmodule FeedHub.CommandSetTest do
 
   describe "feed/1" do
     test "feed composes feed from uid" do
-      command_set = build(:command_set) |> with_fetch |> insert |> reload
-      source = command_set.data["fetch"]
+      command_set = build(:command_set) |> with_fetch |> insert
+      source = command_set.data.fetch
       insert(:feed, url: source) |> with_items
 
       rss = read_file!("jobs_feed.rss")
